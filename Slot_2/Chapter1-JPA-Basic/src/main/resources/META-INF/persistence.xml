@@ -7,7 +7,7 @@
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
 
         <!-- Khai báo Entity -->
-        <class>fe.masv.pojo.Employee</class>
+        <class>fe.DE200093.pojo.Employee</class>
 
         <properties>
             <property name="jakarta.persistence.jdbc.driver" value="com.microsoft.sqlserver.jdbc.SQLServerDriver"/>
