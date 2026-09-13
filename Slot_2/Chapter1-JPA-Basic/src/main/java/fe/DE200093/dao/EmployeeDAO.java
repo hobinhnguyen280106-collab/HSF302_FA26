@@ -38,4 +38,28 @@ public class EmployeeDAO {
             em.close();
         }
     }
+
+    public Employee findByEmail(String email) {
+        EntityManager em = emf.createEntityManager();
+        try {
+            TypedQuery<Employee> query = em.createQuery("SELECT e FROM Employee e WHERE e.email = :email", Employee.class);
+            query.setParameter("email", email);
+            return query.getSingleResult();
+        } catch (NoResultException ex) {
+            return null;
+        } finally {
+            em.close();
+        }
+    }
+
+    public java.util.List<Employee> findBySalaryGreaterThan(java.math.BigDecimal minSalary) {
+        EntityManager em = emf.createEntityManager();
+        try {
+            TypedQuery<Employee> query = em.createQuery("SELECT e FROM Employee e WHERE e.salary > :minSalary", Employee.class);
+            query.setParameter("minSalary", minSalary);
+            return query.getResultList();
+        } finally {
+            em.close();
+        }
+    }
 }
