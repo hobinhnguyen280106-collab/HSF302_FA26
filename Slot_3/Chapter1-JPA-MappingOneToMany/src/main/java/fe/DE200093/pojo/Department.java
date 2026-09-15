@@ -39,4 +39,14 @@ public class Department {
     public void setLocation(String location) {
         this.location = location;
     }
+
+    @OneToMany(mappedBy = "department", cascade = CascadeType.ALL, orphanRemoval = true)
+    private java.util.List<Employee> employees = new java.util.ArrayList<>();
+
+    public java.util.List<Employee> getEmployees() {
+        return employees;
+    }
+    public void setEmployees(java.util.List<Employee> employees) {
+        this.employees = employees;
+    }
 }
