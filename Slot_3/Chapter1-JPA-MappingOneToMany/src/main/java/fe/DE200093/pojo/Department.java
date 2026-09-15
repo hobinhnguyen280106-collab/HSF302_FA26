@@ -1,5 +1,6 @@
 package fe.DE200093.pojo;
 
+import fe.DE200093.util.JPAUtil;
 import jakarta.persistence.*;
 
 @Entity
@@ -59,4 +60,6 @@ public class Department {
         this.employees.remove(e);
         e.setDepartment(null);
     }
+
+
 }
