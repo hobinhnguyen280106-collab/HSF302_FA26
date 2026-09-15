@@ -7,8 +7,8 @@
     <persistence-unit name="hsf302FU" transaction-type="RESOURCE_LOCAL">
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
 
-        <class>fe.de200093.pojo.Department</class>
-        <class>fe.de2000093.pojo.Employee</class>
+        <class>fe.DE200093.pojo.Department</class>
+        <class>fe.DE200093.pojo.Employee</class>
 
         <properties>
             <property name="jakarta.persistence.jdbc.driver"
