@@ -1,16 +1,22 @@
 package fe.DE200093.dao;
 
 import fe.DE200093.pojo.Employee;
-import fe.DE200093.util.JPAUtil;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.EntityTransaction;
 
 import java.util.List;
 
 public class EmployeeDAO {
 
+    private final EntityManagerFactory emf;
+
+    public EmployeeDAO(EntityManagerFactory emf) {
+        this.emf = emf;
+    }
+
     public void save(Employee employee) {
-        EntityManager em = JPAUtil.getEMF().createEntityManager();
+        EntityManager em = emf.createEntityManager();
         EntityTransaction tx = em.getTransaction();
         try {
             tx.begin();
@@ -27,7 +33,7 @@ public class EmployeeDAO {
     }
 
     public Employee findById(Long id) {
-        EntityManager em = JPAUtil.getEMF().createEntityManager();
+        EntityManager em = emf.createEntityManager();
         try {
             return em.find(Employee.class, id);
         } finally {
@@ -36,7 +42,7 @@ public class EmployeeDAO {
     }
 
     public List<Employee> findAll() {
-        EntityManager em = JPAUtil.getEMF().createEntityManager();
+        EntityManager em = emf.createEntityManager();
         try {
             return em.createQuery("SELECT e FROM Employee e", Employee.class).getResultList();
         } finally {
@@ -45,7 +51,7 @@ public class EmployeeDAO {
     }
 
     public Employee update(Employee employee) {
-        EntityManager em = JPAUtil.getEMF().createEntityManager();
+        EntityManager em = emf.createEntityManager();
         EntityTransaction tx = em.getTransaction();
         try {
             tx.begin();
@@ -63,7 +69,7 @@ public class EmployeeDAO {
     }
 
     public void delete(Long id) {
-        EntityManager em = JPAUtil.getEMF().createEntityManager();
+        EntityManager em = emf.createEntityManager();
         EntityTransaction tx = em.getTransaction();
         try {
             tx.begin();
