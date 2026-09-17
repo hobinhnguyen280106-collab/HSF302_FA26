@@ -1,49 +1,33 @@
 package fe.DE200093;
 
-import fe.DE200093.dao.DepartmentDAO;
-import fe.DE200093.dao.EmployeeDAO;
 import fe.DE200093.pojo.Department;
-import fe.DE200093.pojo.Employee;
-import fe.DE200093.pojo.Gender;
 import fe.DE200093.util.JPAUtil;
+import jakarta.persistence.EntityManager;
 
-import java.math.BigDecimal;
-import java.time.LocalDate;
+import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
-        DepartmentDAO deptDAO = new DepartmentDAO();
-        EmployeeDAO empDAO = new EmployeeDAO();
+        EntityManager em = JPAUtil.getEMF().createEntityManager();
 
-        // 1. Tạo 1 Department + 3 Employee qua addEmployee()
-        Department dept = new Department("Marketing", "Ha Noi");
-        Employee e1 = new Employee("emp1@company.com", "Nguyen Van A", Gender.MALE,
-                new BigDecimal("1000"), LocalDate.now());
-        Employee e2 = new Employee("emp2@company.com", "Tran Thi B", Gender.FEMALE,
-                new BigDecimal("1200"), LocalDate.of(2023, 2, 1));
-        Employee e3 = new Employee("emp3@company.com", "Le Van C", Gender.OTHER,
-                new BigDecimal("1500"), LocalDate.of(2023, 3, 1));
+        System.out.println("========== BẮT ĐẦU TODO 2.8: TÁI HIỆN N+1 QUERY ==========");
 
-        dept.addEmployee(e1);
-        dept.addEmployee(e2);
-        dept.addEmployee(e3);
+        // 1. Câu query thứ nhất (1): Lấy toàn bộ danh sách phòng ban
+        System.out.println("--> GỌI SELECT TẤT CẢ DEPARTMENT:");
+        List<Department> list = em.createQuery("SELECT d FROM Department d", Department.class)
+                .getResultList();
+        System.out.println("Số lượng phòng ban tìm thấy: " + list.size());
 
-        // 2. Chỉ persist Department (CascadeType.ALL tự lưu cả 3 Employee)
-        deptDAO.save(dept);
-        System.out.println("Đã lưu thành công Department ID: " + dept.getId());
-
-        // 3. Test ném lỗi khi trùng email (Unique Constraint)
-        System.out.println("\n--- BẮT ĐẦU TEST TRÙNG EMAIL ---");
-        try {
-            Employee duplicateEmailEmp = new Employee("emp1@company.com", "Nguyen Fake",
-                    Gender.MALE, new BigDecimal("2000"), LocalDate.now());
-            dept.addEmployee(duplicateEmailEmp);
-            deptDAO.update(dept); // hoặc empDAO.save(duplicateEmailEmp);
-            System.out.println("TEST THẤT BẠI: Không có ngoại lệ nào xảy ra!");
-        } catch (Exception ex) {
-            System.out.println("TEST THÀNH CÔNG: Đã ném exception vi phạm Unique Key: " + ex.getMessage());
+        // 2. N câu query phụ (+ N): Mỗi vòng lặp truy cập d.getEmployees().size()
+        // Session đang mở nên Hibernate sẽ bắn thêm 1 câu SELECT employees cho mỗi phòng ban
+        System.out.println("\n--> DUYỆT DANH SÁCH VÀ TRUY CẬP EMPLOYEES:");
+        for (Department d : list) {
+            System.out.println("Phòng ban: " + d.getName() + " | Số nhân viên: " + d.getEmployees().size());
         }
 
+        System.out.println("========== KẾT THÚC TODO 2.8 ==========");
+
+        em.close();
         JPAUtil.close();
     }
 }
