@@ -4,6 +4,7 @@ import fe.DE200093.pojo.Department;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.EntityTransaction;
+import fe.DE200093.util.JPAUtil;
 
 import java.util.List;
 
@@ -16,6 +17,9 @@ public class DepartmentDAO {
         this.emf = emf;
     }
 
+    public DepartmentDAO() {
+        this.emf = JPAUtil.getEMF();
+    }
     public void save(Department department) {
         EntityManager em = emf.createEntityManager();
         EntityTransaction tx = em.getTransaction();
@@ -95,6 +99,17 @@ public class DepartmentDAO {
             return em.createQuery("SELECT d FROM Department d JOIN FETCH d.employees WHERE d.id = :id", Department.class)
                     .setParameter("id", id)
                     .getSingleResult();
+        } finally {
+            em.close();
+        }
+    }
+
+    public List<Department> findAllWithEmployees() {
+        EntityManager em = emf.createEntityManager();
+        try {
+            // Dùng DISTINCT JOIN FETCH để lấy cả Department và nạp sẵn tập hợp Employees
+            return em.createQuery("SELECT DISTINCT d FROM Department d JOIN FETCH d.employees", Department.class)
+                    .getResultList();
         } finally {
             em.close();
         }
