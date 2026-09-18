@@ -34,7 +34,8 @@ public class Project {
 
     // Project là inverse side
     // mappedBy = "projects" trỏ tới field projects trong Employee
-
+    @ManyToMany(mappedBy = "projects")
+    private Set<Employee> employees = new HashSet<>();
 
     public Project() {
     }
@@ -93,4 +94,11 @@ public class Project {
         this.endDate = endDate;
     }
 
+    public Set<Employee> getEmployees() {
+        return employees;
+    }
+
+    public void setEmployees(Set<Employee> employees) {
+        this.employees = employees;
+    }
 }
