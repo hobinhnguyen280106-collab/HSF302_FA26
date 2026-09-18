@@ -5,6 +5,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.EntityTransaction;
 import fe.DE200093.util.JPAUtil;
+import fe.DE200093.pojo.Project;
 
 import java.util.List;
 
@@ -82,6 +83,30 @@ public class EmployeeDAO {
             if (employee != null) {
                 em.remove(employee);
             }
+            tx.commit();
+        } catch (Exception e) {
+            if (tx.isActive()) {
+                tx.rollback();
+            }
+            throw e;
+        } finally {
+            em.close();
+        }
+    }
+
+    public void assignEmployeeToProject(Long employeeId, Long projectId) {
+        EntityManager em = emf.createEntityManager();
+        EntityTransaction tx = em.getTransaction();
+        try {
+            tx.begin();
+
+            Employee employee = em.find(Employee.class, employeeId);
+            fe.DE200093.pojo.Project project = em.find(fe.DE200093.pojo.Project.class, projectId);
+
+            if (employee != null && project != null) {
+                employee.assignToProject(project); // Gọi helper method của TODO 5.5
+            }
+
             tx.commit();
         } catch (Exception e) {
             if (tx.isActive()) {
