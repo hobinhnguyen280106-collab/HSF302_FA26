@@ -127,4 +127,11 @@ public class Employee {
     public int hashCode() {
         return Objects.hash(email);
     }
+
+    public void assignToProject(Project p) {
+        if (p != null) {
+            this.projects.add(p);
+            p.getEmployees().add(this);
+        }
+    }
 }
