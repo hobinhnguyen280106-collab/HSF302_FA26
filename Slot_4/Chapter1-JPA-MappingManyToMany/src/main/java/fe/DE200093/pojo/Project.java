@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 @Entity
@@ -100,5 +101,19 @@ public class Project {
 
     public void setEmployees(Set<Employee> employees) {
         this.employees = employees;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        // Lý do không dùng id: projectCode là Business Key unique, không bị phụ thuộc vào id do DB tự sinh.
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Project project = (Project) o;
+        return Objects.equals(projectCode, project.projectCode);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(projectCode);
     }
 }

@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 @Entity
@@ -53,43 +54,54 @@ public class Employee {
     public Long getId() {
         return id;
     }
-    public void setId(Long id) {
+    public void setId(Long id)
+    {
         this.id = id;
     }
     public String getFullName() {
+
         return fullName;
     }
     public void setFullName(String fullName) {
+
         this.fullName = fullName;
     }
     public BigDecimal getSalary() {
         return salary;
     }
     public void setSalary(BigDecimal salary) {
+
         this.salary = salary;
     }
     public LocalDate getHireDate() {
+
         return hireDate;
     }
     public void setHireDate(LocalDate hireDate) {
+
         this.hireDate = hireDate;
     }
     public String getEmail() {
+
         return email;
     }
     public void setEmail(String email) {
+
         this.email = email;
     }
     public Gender getGender() {
         return gender;
     }
     public void setGender(Gender gender) {
+
         this.gender = gender;
     }
     public boolean isActive() {
+
         return active;
     }
     public void setActive(boolean active) {
+
         this.active = active;
     }
 
@@ -99,4 +111,20 @@ public class Employee {
 
     public Department getDepartment() { return department; }
     public void setDepartment(Department department) { this.department = department; }
+
+    @Override
+    public boolean equals(Object o) {
+        // Lý do không dùng id: Id chỉ được sinh ra sau khi entity được lưu vào DB (persist).
+        // Trước khi lưu, id là null. Dùng Business Key (email - unique & not null) giúp
+        // Set nhận diện đúng entity ngay cả khi entity chưa được persist.
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Employee employee = (Employee) o;
+        return Objects.equals(email, employee.email);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(email);
+    }
 }
