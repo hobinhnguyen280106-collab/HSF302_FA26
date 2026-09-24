@@ -4,6 +4,9 @@ import fe.DE200093.pojo.Employee;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.EntityTransaction;
+import jakarta.persistence.EntityManager;
+import java.math.BigDecimal;
+import java.util.List;
 import fe.DE200093.util.JPAUtil;
 import fe.DE200093.pojo.Project;
 
@@ -113,6 +116,40 @@ public class EmployeeDAO {
                 tx.rollback();
             }
             throw e;
+        } finally {
+            em.close();
+        }
+    }
+
+    public void getProjectStatistics() {
+        EntityManager em = JPAUtil.getEMF().createEntityManager();
+
+        try {
+            String jpql = """
+                SELECT p.projectName, COUNT(e), SUM(e.salary)
+                FROM Project p
+                JOIN p.employees e
+                WHERE e.active = true
+                GROUP BY p.projectName
+                """;
+
+            List<Object[]> results = em.createQuery(jpql, Object[].class)
+                    .getResultList();
+
+            System.out.println("=== PROJECT STATISTICS ===");
+
+            for (Object[] row : results) {
+                String projectName = (String) row[0];
+                Long employeeCount = (Long) row[1];
+                BigDecimal totalSalary = (BigDecimal) row[2];
+
+                System.out.println(
+                        "Project: " + projectName
+                                + " | Active employees: " + employeeCount
+                                + " | Total salary: " + totalSalary
+                );
+            }
+
         } finally {
             em.close();
         }
