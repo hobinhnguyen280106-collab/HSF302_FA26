@@ -184,4 +184,23 @@ public class EmployeeDAO {
         }
     }
 
+    public List<Employee> findActiveEmployeesInMultipleProjects() {
+        EntityManager em = JPAUtil.getEMF().createEntityManager();
+
+        try {
+            String jpql = """
+                SELECT e
+                FROM Employee e
+                JOIN FETCH e.projects
+                WHERE e.active = true
+                AND SIZE(e.projects) > 1
+                """;
+
+            return em.createQuery(jpql, Employee.class)
+                    .getResultList();
+
+        } finally {
+            em.close();
+        }
+    }
 }
