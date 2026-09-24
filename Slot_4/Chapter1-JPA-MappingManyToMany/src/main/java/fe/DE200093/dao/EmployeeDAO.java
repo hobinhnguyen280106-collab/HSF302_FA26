@@ -203,4 +203,38 @@ public class EmployeeDAO {
             em.close();
         }
     }
+
+    public void deactivateEmployee(Long employeeId) {
+        EntityManager em = JPAUtil.getEMF().createEntityManager();
+
+        EntityTransaction tx = em.getTransaction();
+
+        try {
+            tx.begin();
+
+            Employee employee = em.find(Employee.class, employeeId);
+
+            if (employee == null) {
+                throw new IllegalArgumentException(
+                        "Employee not found: " + employeeId
+                );
+            }
+
+            // Only deactivate the employee.
+            // Existing project relationships are preserved for history.
+            // Do not remove employee_project records and do not use CascadeType.REMOVE.
+            employee.setActive(false);
+
+            tx.commit();
+
+        } catch (Exception e) {
+            if (tx.isActive()) {
+                tx.rollback();
+            }
+            throw e;
+
+        } finally {
+            em.close();
+        }
+    }
 }

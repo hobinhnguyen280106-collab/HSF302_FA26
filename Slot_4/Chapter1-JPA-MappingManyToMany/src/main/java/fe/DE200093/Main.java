@@ -56,5 +56,7 @@ public class Main {
                             + e.getProjects().size()
             );
         }
+
+        employeeDAO.deactivateEmployee(4L);
     }
 }
