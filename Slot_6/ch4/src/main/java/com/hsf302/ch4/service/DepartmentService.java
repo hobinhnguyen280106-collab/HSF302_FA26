@@ -4,6 +4,7 @@ import com.hsf302.ch4.dto.DepartmentStatDTO;
 import com.hsf302.ch4.pojo.Department;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface DepartmentService {
     long count();
@@ -12,4 +13,8 @@ public interface DepartmentService {
     List<Department> findDepartmentsWithoutStudents();
 
     List<DepartmentStatDTO> getStatistics();
+
+    Optional<Department> findByCode(String code);   // TODO 16a
+
+    Department getWithStudents(String code);   // TODO 16b
 }
