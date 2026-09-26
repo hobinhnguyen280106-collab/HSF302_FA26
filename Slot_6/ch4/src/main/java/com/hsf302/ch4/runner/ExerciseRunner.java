@@ -108,7 +108,14 @@ public class ExerciseRunner implements CommandLineRunner {
     }
 
 
-    private void todo11() {}
+    private void todo11() {
+        title("TODO 11: Nested property / Top / IsEmpty");
+        printList("Students of SE (order by name)", studentService.findByDepartment("SE"));
+        System.out.println("count students of AI -> " + studentService.countByDepartment("AI"));
+        printList("Top 3 GPA", studentService.findTop3ByGpa());
+        printList("Departments without students", departmentService.findDepartmentsWithoutStudents());
+    }
+
     private void todo12() {}
     private void todo13() {}
     private void todo14() {}
