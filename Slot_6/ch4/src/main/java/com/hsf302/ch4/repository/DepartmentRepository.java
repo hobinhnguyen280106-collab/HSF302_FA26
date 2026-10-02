@@ -25,5 +25,9 @@ public interface DepartmentRepository extends JpaRepository<Department, Long> {
     @Query("SELECT d FROM Department d LEFT JOIN FETCH d.students WHERE d.code = :code")
     Optional<Department> findByCodeWithStudents(@Param("code") String code);
 
+    // chi lay so luong phong ban > 3
+    // viet custom Query hien thi phong ban va so luong
 
+    // hien thi danh sach so luong sinh vien theo tung phong ban, viet theo CustomQuery
+    // viet cau lenh truy van ngay trong cau  lenh sql
 }
