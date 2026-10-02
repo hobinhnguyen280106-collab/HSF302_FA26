@@ -10,4 +10,8 @@ public interface EnrollmentService {
 
     List<Course> getCoursesOfStudent(String studentCode); //
     List<Student> getStudentsOfCourse(String courseCode);  //
+
+    List<Student> findStudentsInCourse(String courseCode);
+    long countStudentsInCourse(String courseCode);
+    List<Student> findActiveStudentsInCourse(String courseCode);
 }
