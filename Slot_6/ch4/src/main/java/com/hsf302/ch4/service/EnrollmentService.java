@@ -4,6 +4,7 @@ import com.hsf302.ch4.dto.EnrollmentView;
 import com.hsf302.ch4.dto.StudentCreditDTO;
 import com.hsf302.ch4.pojo.Course;
 import com.hsf302.ch4.pojo.Student;
+import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
@@ -40,4 +41,7 @@ public interface EnrollmentService {
     void unenroll(String studentCode, String courseCode);
 
     void switchCourse(String studentCode, String fromCode, String toCode);
+
+    int removeEnrollmentsOfInactiveStudents();
+
 }
