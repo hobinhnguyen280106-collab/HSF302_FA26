@@ -28,4 +28,6 @@ public interface StudentService {
     List<Student> search(String keyword);
 
     Page<Student> findStudents(String keyword, int page, int size);
+
+    Page<Student> findStudents(String keyword, int page, int size, String sortField, String sortDir);
 }

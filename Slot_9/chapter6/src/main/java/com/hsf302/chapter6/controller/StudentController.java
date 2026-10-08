@@ -42,20 +42,45 @@ public class StudentController {
 //        return "students/list";
 //    }
 
+//    @GetMapping({"", "/", "/list"})
+//    public String list(
+//            @RequestParam(name = "keyword", required = false, defaultValue = "") String keyword,
+//            @RequestParam(name = "page", defaultValue = "0") int page,
+//            @RequestParam(name = "size", defaultValue = "3") int size,
+//            Model model) {
+//
+//        Page<Student> studentPage = studentService.findStudents(keyword, page, size);
+//
+//        model.addAttribute("students", studentPage.getContent());
+//        model.addAttribute("currentPage", page);
+//        model.addAttribute("totalPages", studentPage.getTotalPages());
+//        model.addAttribute("totalItems", studentPage.getTotalElements());
+//        model.addAttribute("keyword", keyword);
+//
+//        return "students/list";
+//    }
+
     @GetMapping({"", "/", "/list"})
     public String list(
             @RequestParam(name = "keyword", required = false, defaultValue = "") String keyword,
             @RequestParam(name = "page", defaultValue = "0") int page,
             @RequestParam(name = "size", defaultValue = "3") int size,
+            @RequestParam(name = "sortField", defaultValue = "id") String sortField,
+            @RequestParam(name = "sortDir", defaultValue = "asc") String sortDir,
             Model model) {
 
-        Page<Student> studentPage = studentService.findStudents(keyword, page, size);
+        Page<Student> studentPage = studentService.findStudents(keyword, page, size, sortField, sortDir);
 
         model.addAttribute("students", studentPage.getContent());
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", studentPage.getTotalPages());
         model.addAttribute("totalItems", studentPage.getTotalElements());
         model.addAttribute("keyword", keyword);
+
+        // Dữ liệu phục vụ sắp xếp trên View
+        model.addAttribute("sortField", sortField);
+        model.addAttribute("sortDir", sortDir);
+        model.addAttribute("reverseSortDir", sortDir.equals("asc") ? "desc" : "asc");
 
         return "students/list";
     }

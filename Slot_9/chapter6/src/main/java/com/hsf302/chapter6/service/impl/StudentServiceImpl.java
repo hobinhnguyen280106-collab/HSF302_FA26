@@ -103,4 +103,22 @@ public class StudentServiceImpl implements StudentService {
         }
         return studentRepository.findAll(pageable);
     }
+
+    @Override
+    public Page<Student> findStudents(String keyword, int page, int size, String sortField, String sortDir) {
+        // Xác định chiều sắp xếp: desc nếu người dùng yêu cầu, ngược lại mặc định là asc
+        Sort sort = sortDir.equalsIgnoreCase("desc")
+                ? Sort.by(sortField).descending()
+                : Sort.by(sortField).ascending();
+
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        if (keyword != null && !keyword.isBlank()) {
+            String trimmed = keyword.trim();
+            return studentRepository.findByNameContainingIgnoreCaseOrEmailContainingIgnoreCase(
+                    trimmed, trimmed, pageable
+            );
+        }
+        return studentRepository.findAll(pageable);
+    }
 }

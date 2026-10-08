@@ -14,10 +14,13 @@
         </a>
     </div>
 
-    <!-- Thanh tìm kiếm -->
+    <!-- Thanh tìm kiếm (giữ nguyên sortField và sortDir khi tìm) -->
     <div class="row mb-3">
         <div class="col-md-6">
             <form th:action="@{/students}" method="get" class="d-flex gap-2">
+                <input type="hidden" name="sortField" th:value="${sortField}"/>
+                <input type="hidden" name="sortDir" th:value="${sortDir}"/>
+
                 <input type="text" name="keyword" th:value="${keyword}"
                        class="form-control" placeholder="Tìm theo tên hoặc email..."/>
                 <button type="submit" class="btn btn-primary">
@@ -41,23 +44,40 @@
                 <a th:href="@{/students/create}" class="btn btn-outline-primary">Thêm ngay</a>
             </div>
 
-            <!-- Bảng dữ liệu -->
+            <!-- Bảng dữ liệu có Sắp xếp theo cột -->
             <table th:unless="${#lists.isEmpty(students)}" class="table table-hover mb-0">
                 <thead>
                 <tr>
                     <th>#</th>
-                    <th>ID</th>
-                    <th>Họ tên</th>
+                    <!-- Sort theo ID -->
+                    <th>
+                        <a class="text-white text-decoration-none"
+                           th:href="@{/students(page=0, keyword=${keyword}, sortField='id', sortDir=${sortField == 'id' ? reverseSortDir : 'asc'})}">
+                            ID <i class="bi" th:classappend="${sortField == 'id'} ? (${sortDir == 'asc'} ? 'bi-arrow-up' : 'bi-arrow-down') : 'bi-arrow-down-up'"></i>
+                        </a>
+                    </th>
+                    <!-- Sort theo Tên -->
+                    <th>
+                        <a class="text-white text-decoration-none"
+                           th:href="@{/students(page=0, keyword=${keyword}, sortField='name', sortDir=${sortField == 'name' ? reverseSortDir : 'asc'})}">
+                            Họ tên <i class="bi" th:classappend="${sortField == 'name'} ? (${sortDir == 'asc'} ? 'bi-arrow-up' : 'bi-arrow-down') : 'bi-arrow-down-up'"></i>
+                        </a>
+                    </th>
                     <th>Email</th>
                     <th>Tuổi</th>
                     <th>Chuyên ngành</th>
-                    <th>GPA</th>
+                    <!-- Sort theo GPA -->
+                    <th>
+                        <a class="text-white text-decoration-none"
+                           th:href="@{/students(page=0, keyword=${keyword}, sortField='gpa', sortDir=${sortField == 'gpa' ? reverseSortDir : 'asc'})}">
+                            GPA <i class="bi" th:classappend="${sortField == 'gpa'} ? (${sortDir == 'asc'} ? 'bi-arrow-up' : 'bi-arrow-down') : 'bi-arrow-down-up'"></i>
+                        </a>
+                    </th>
                     <th class="text-center">Thao tác</th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr th:each="student, stat : ${students}">
-                    <!-- Số thứ tự tính theo từng trang -->
                     <td th:text="${currentPage * 3 + stat.count}">1</td>
                     <td th:text="${student.id}">1</td>
                     <td>
@@ -97,29 +117,26 @@
         </div>
     </div>
 
-    <!-- Thanh phân trang Bootstrap -->
+    <!-- Thanh phân trang (kèm theo sortField và sortDir khi chuyển trang) -->
     <nav th:if="${totalPages > 1}" class="mt-4" aria-label="Pagination">
         <ul class="pagination justify-content-center">
-            <!-- Nút Trước -->
             <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
                 <a class="page-link"
-                   th:href="@{/students(page=${currentPage - 1}, keyword=${keyword})}">
+                   th:href="@{/students(page=${currentPage - 1}, keyword=${keyword}, sortField=${sortField}, sortDir=${sortDir})}">
                     Trước
                 </a>
             </li>
 
-            <!-- Các số trang -->
             <li class="page-item" th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
                 th:classappend="${currentPage == i} ? 'active'">
                 <a class="page-link"
-                   th:href="@{/students(page=${i}, keyword=${keyword})}"
+                   th:href="@{/students(page=${i}, keyword=${keyword}, sortField=${sortField}, sortDir=${sortDir})}"
                    th:text="${i + 1}">1</a>
             </li>
 
-            <!-- Nút Sau -->
             <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
                 <a class="page-link"
-                   th:href="@{/students(page=${currentPage + 1}, keyword=${keyword})}">
+                   th:href="@{/students(page=${currentPage + 1}, keyword=${keyword}, sortField=${sortField}, sortDir=${sortDir})}">
                     Sau
                 </a>
             </li>
