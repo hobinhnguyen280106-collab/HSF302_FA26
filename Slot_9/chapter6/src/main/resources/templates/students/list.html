@@ -14,7 +14,7 @@
         </a>
     </div>
 
-    <!-- MỚI: Thanh tìm kiếm -->
+    <!-- Thanh tìm kiếm -->
     <div class="row mb-3">
         <div class="col-md-6">
             <form th:action="@{/students}" method="get" class="d-flex gap-2">
@@ -57,7 +57,8 @@
                 </thead>
                 <tbody>
                 <tr th:each="student, stat : ${students}">
-                    <td th:text="${stat.count}">1</td>
+                    <!-- Số thứ tự tính theo từng trang -->
+                    <td th:text="${currentPage * 3 + stat.count}">1</td>
                     <td th:text="${student.id}">1</td>
                     <td>
                         <a th:href="@{/students/{id}(id=${student.id})}"
@@ -96,11 +97,41 @@
         </div>
     </div>
 
-    <div th:unless="${#lists.isEmpty(students)}" class="text-muted mt-2">
-        <small>Tổng: <strong th:text="${#lists.size(students)}">0</strong> sinh viên</small>
+    <!-- Thanh phân trang Bootstrap -->
+    <nav th:if="${totalPages > 1}" class="mt-4" aria-label="Pagination">
+        <ul class="pagination justify-content-center">
+            <!-- Nút Trước -->
+            <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+                <a class="page-link"
+                   th:href="@{/students(page=${currentPage - 1}, keyword=${keyword})}">
+                    Trước
+                </a>
+            </li>
+
+            <!-- Các số trang -->
+            <li class="page-item" th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+                th:classappend="${currentPage == i} ? 'active'">
+                <a class="page-link"
+                   th:href="@{/students(page=${i}, keyword=${keyword})}"
+                   th:text="${i + 1}">1</a>
+            </li>
+
+            <!-- Nút Sau -->
+            <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
+                <a class="page-link"
+                   th:href="@{/students(page=${currentPage + 1}, keyword=${keyword})}">
+                    Sau
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- Thống kê tổng số -->
+    <div class="text-muted text-center mt-2">
+        <small>Hiển thị trang <strong th:text="${currentPage + 1}">1</strong> / <strong th:text="${totalPages}">1</strong>
+            (Tổng số: <strong th:text="${totalItems}">0</strong> sinh viên)</small>
     </div>
 
 </section>
 </body>
 </html>
-

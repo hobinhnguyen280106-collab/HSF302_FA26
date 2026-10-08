@@ -4,6 +4,7 @@ import com.hsf302.chapter6.entity.Student;
 import com.hsf302.chapter6.service.StudentService;
 import jakarta.validation.Valid;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -33,11 +34,29 @@ public class StudentController {
     // ==================== READ ALL ====================
     // ==================== READ ALL / SEARCH ====================
 
+//    @GetMapping({"", "/", "/list"})
+//    public String list(@RequestParam(name = "keyword", required = false, defaultValue = "") String keyword,
+//                       Model model) {
+//        model.addAttribute("students", studentService.search(keyword));
+//        model.addAttribute("keyword", keyword);
+//        return "students/list";
+//    }
+
     @GetMapping({"", "/", "/list"})
-    public String list(@RequestParam(name = "keyword", required = false, defaultValue = "") String keyword,
-                       Model model) {
-        model.addAttribute("students", studentService.search(keyword));
+    public String list(
+            @RequestParam(name = "keyword", required = false, defaultValue = "") String keyword,
+            @RequestParam(name = "page", defaultValue = "0") int page,
+            @RequestParam(name = "size", defaultValue = "3") int size,
+            Model model) {
+
+        Page<Student> studentPage = studentService.findStudents(keyword, page, size);
+
+        model.addAttribute("students", studentPage.getContent());
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", studentPage.getTotalPages());
+        model.addAttribute("totalItems", studentPage.getTotalElements());
         model.addAttribute("keyword", keyword);
+
         return "students/list";
     }
 
