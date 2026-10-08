@@ -20,7 +20,6 @@ public class StudentController {
 
     private final StudentService studentService;
 
-    // Constructor injection (recommended) — 1 constructor nên không cần @Autowired
     public StudentController(StudentService studentService) {
         this.studentService = studentService;
     }
@@ -32,16 +31,19 @@ public class StudentController {
     }
 
     // ==================== READ ALL ====================
+    // ==================== READ ALL / SEARCH ====================
 
-    @GetMapping
-    public String list(Model model) {
-        model.addAttribute("students", studentService.findAll());
+    @GetMapping({"", "/", "/list"})
+    public String list(@RequestParam(name = "keyword", required = false, defaultValue = "") String keyword,
+                       Model model) {
+        model.addAttribute("students", studentService.search(keyword));
+        model.addAttribute("keyword", keyword);
         return "students/list";
     }
 
     // ==================== READ ONE ====================
-
-    @GetMapping("/{id}")
+    // Thêm regex :[0-9]+ để chỉ nhận ID là số, không nhận nhầm chữ "list" hay "create"
+    @GetMapping("/{id:[0-9]+}")
     public String detail(@PathVariable("id") Long id, Model model, RedirectAttributes ra) {
         return studentService.findById(id)
                 .map(student -> {
@@ -67,16 +69,13 @@ public class StudentController {
                          BindingResult bindingResult,
                          Model model,
                          RedirectAttributes ra) {
-        // 1. Kiểm tra nghiệp vụ: email trùng (chỉ khi email đã hợp lệ về định dạng)
         if (!bindingResult.hasFieldErrors("email")
                 && studentService.isEmailTaken(student.getEmail(), null)) {
             bindingResult.rejectValue("email", "duplicate", "Email đã tồn tại");
         }
-        // 2. Có lỗi → quay lại form (KHÔNG redirect để giữ dữ liệu + lỗi)
         if (bindingResult.hasErrors()) {
             return formView(model, false);
         }
-        // 3. Lưu DB — vẫn bắt lỗi UNIQUE phòng trường hợp 2 người submit cùng lúc
         try {
             studentService.create(student);
         } catch (DataIntegrityViolationException e) {
@@ -84,12 +83,12 @@ public class StudentController {
             return formView(model, false);
         }
         ra.addFlashAttribute("successMsg", "Thêm sinh viên thành công!");
-        return "redirect:/students";                      // PRG pattern
+        return "redirect:/students";
     }
 
     // ==================== UPDATE ====================
 
-    @GetMapping("/{id}/edit")
+    @GetMapping("/{id:[0-9]+}/edit")
     public String showEditForm(@PathVariable("id") Long id, Model model, RedirectAttributes ra) {
         return studentService.findById(id)
                 .map(student -> {
@@ -102,13 +101,13 @@ public class StudentController {
                 });
     }
 
-    @PostMapping("/{id}/edit")
+    @PostMapping("/{id:[0-9]+}/edit")
     public String update(@PathVariable("id") Long id,
                          @Valid @ModelAttribute("student") Student student,
                          BindingResult bindingResult,
                          Model model,
                          RedirectAttributes ra) {
-        student.setId(id);   // form không gửi id → gắn từ URL để khi trả lỗi, form action vẫn đúng
+        student.setId(id);
 
         if (!bindingResult.hasFieldErrors("email")
                 && studentService.isEmailTaken(student.getEmail(), id)) {
@@ -132,7 +131,7 @@ public class StudentController {
 
     // ==================== DELETE ====================
 
-    @PostMapping("/{id}/delete")
+    @PostMapping("/{id:[0-9]+}/delete")
     public String delete(@PathVariable("id") Long id, RedirectAttributes ra) {
         if (studentService.delete(id)) {
             ra.addFlashAttribute("successMsg", "Xóa sinh viên thành công!");
