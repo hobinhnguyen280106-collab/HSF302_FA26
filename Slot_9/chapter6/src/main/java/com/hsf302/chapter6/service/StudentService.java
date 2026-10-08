@@ -1,5 +1,6 @@
 package com.hsf302.chapter6.service;
 
+import com.hsf302.chapter6.dto.StudentForm;
 import com.hsf302.chapter6.entity.Student;
 import org.springframework.data.domain.Page;
 
@@ -30,4 +31,14 @@ public interface StudentService {
     Page<Student> findStudents(String keyword, int page, int size);
 
     Page<Student> findStudents(String keyword, int page, int size, String sortField, String sortDir);
+
+    // MỚI: Lấy thông tin sinh viên dạng Form DTO để hiển thị lên form edit
+    StudentForm findFormById(Long id);
+
+    // MỚI: Nhận DTO để tạo mới
+    void create(StudentForm form);
+
+    // MỚI: Nhận DTO để cập nhật
+    boolean update(Long id, StudentForm form);
+
 }

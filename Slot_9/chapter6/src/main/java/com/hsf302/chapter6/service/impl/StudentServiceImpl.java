@@ -1,5 +1,6 @@
 package com.hsf302.chapter6.service.impl;
 
+import com.hsf302.chapter6.dto.StudentForm;
 import com.hsf302.chapter6.entity.Student;
 import com.hsf302.chapter6.repository.StudentRepository;
 import com.hsf302.chapter6.service.StudentService;
@@ -120,5 +121,44 @@ public class StudentServiceImpl implements StudentService {
             );
         }
         return studentRepository.findAll(pageable);
+    }
+
+    @Override
+    public StudentForm findFormById(Long id) {
+        return studentRepository.findById(id).map(s -> {
+            StudentForm form = new StudentForm();
+            form.setId(s.getId());
+            form.setName(s.getName());
+            form.setEmail(s.getEmail());
+            form.setAge(s.getAge());
+            form.setMajor(s.getMajor());
+            form.setGpa(s.getGpa());
+            return form;
+        }).orElse(null);
+    }
+
+    @Override
+    @Transactional
+    public void create(StudentForm form) {
+        Student s = new Student();
+        s.setName(form.getName());
+        s.setEmail(form.getEmail());
+        s.setAge(form.getAge());
+        s.setMajor(form.getMajor());
+        s.setGpa(form.getGpa());
+        studentRepository.save(s);
+    }
+
+    @Override
+    @Transactional
+    public boolean update(Long id, StudentForm form) {
+        return studentRepository.findById(id).map(s -> {
+            s.setName(form.getName());
+            s.setEmail(form.getEmail());
+            s.setAge(form.getAge());
+            s.setMajor(form.getMajor());
+            s.setGpa(form.getGpa());
+            return true;
+        }).orElse(false);
     }
 }
