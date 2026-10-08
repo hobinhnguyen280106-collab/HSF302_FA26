@@ -21,7 +21,7 @@ public class StudentForm {
     private Integer age;
 
     @NotBlank(message = "Vui lòng chọn chuyên ngành")
-    private String major;
+    private Long majorId;
 
     @NotNull(message = "GPA không được để trống")
     @DecimalMin(value = "0.0", message = "GPA tối thiểu là 0.0")
@@ -57,11 +57,12 @@ public class StudentForm {
         this.age = age;
     }
 
-    public String getMajor() {
-        return major;
+    public Long getMajorId() {
+        return majorId;
     }
-    public void setMajor(String major) {
-        this.major = major;
+
+    public void setMajorId(Long majorId) {
+        this.majorId = majorId;
     }
 
     public Double getGpa() {

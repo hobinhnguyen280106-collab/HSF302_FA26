@@ -1,6 +1,7 @@
 package com.hsf302.chapter6.controller;
 
 import com.hsf302.chapter6.dto.StudentForm;
+import com.hsf302.chapter6.entity.Major;
 import com.hsf302.chapter6.entity.Student;
 import com.hsf302.chapter6.service.StudentService;
 import jakarta.validation.Valid;
@@ -27,9 +28,10 @@ public class StudentController {
     }
 
     /** Chạy trước MỌI handler trong controller → view nào cũng có ${majors} */
+    // Thay đổi method majors() trong StudentController:
     @ModelAttribute("majors")
-    public List<String> majors() {
-        return studentService.getMajors();
+    public List<Major> majors() {
+        return studentService.getAllMajors();
     }
 
     // ==================== READ ALL ====================

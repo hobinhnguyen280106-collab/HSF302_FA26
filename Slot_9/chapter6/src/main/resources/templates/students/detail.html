@@ -40,7 +40,7 @@
 
                         <dt class="col-sm-4">Chuyên ngành</dt>
                         <dd class="col-sm-8">
-                            <span class="badge bg-primary" th:text="${student.major}">CNTT</span>
+                            <p><strong>Chuyên ngành:</strong> <span th:text="${student.major.name} + ' (' + ${student.major.code} + ')'">CNTT</span></p>
                         </dd>
 
                         <dt class="col-sm-4">GPA</dt>

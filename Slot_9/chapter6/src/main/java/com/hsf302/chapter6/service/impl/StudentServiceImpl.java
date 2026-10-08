@@ -1,7 +1,9 @@
 package com.hsf302.chapter6.service.impl;
 
 import com.hsf302.chapter6.dto.StudentForm;
+import com.hsf302.chapter6.entity.Major;
 import com.hsf302.chapter6.entity.Student;
+import com.hsf302.chapter6.repository.MajorRepository;
 import com.hsf302.chapter6.repository.StudentRepository;
 import com.hsf302.chapter6.service.StudentService;
 import org.springframework.data.domain.Page;
@@ -15,13 +17,15 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-@Transactional(readOnly = true)          // mặc định: mọi method chỉ đọc
+@Transactional(readOnly = true)
 public class StudentServiceImpl implements StudentService {
 
     private final StudentRepository studentRepository;
+    private final MajorRepository majorRepository;
 
-    public StudentServiceImpl(StudentRepository studentRepository) {
+    public StudentServiceImpl(StudentRepository studentRepository, MajorRepository majorRepository) {
         this.studentRepository = studentRepository;
+        this.majorRepository = majorRepository;
     }
 
     @Override
@@ -35,50 +39,13 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    @Transactional                      // ghi dữ liệu → bỏ readOnly
-    public Student create(Student student) {
-        student.setId(null);            // luôn INSERT, không bao giờ ghi đè bản ghi cũ
-        return studentRepository.save(student);
-    }
-
-    @Override
-    @Transactional
-    public boolean update(Long id, Student data) {
-        return studentRepository.findById(id)
-                .map(existing -> {
-                    existing.setName(data.getName());
-                    existing.setEmail(data.getEmail());
-                    existing.setAge(data.getAge());
-                    existing.setMajor(data.getMajor());
-                    existing.setGpa(data.getGpa());
-                    // Không cần gọi save(): entity đang "managed",
-                    // Hibernate tự sinh UPDATE khi transaction commit (dirty checking)
-                    return true;
-                })
-                .orElse(false);
-    }
-
-    @Override
-    @Transactional
-    public boolean delete(Long id) {
-        if (!studentRepository.existsById(id)) {
-            return false;
-        }
-        studentRepository.deleteById(id);
-        return true;
-    }
-
-    @Override
-    public boolean isEmailTaken(String email, Long excludeId) {
-        if (email == null || email.isBlank()) return false;
-        return excludeId == null
-                ? studentRepository.existsByEmailIgnoreCase(email.trim())
-                : studentRepository.existsByEmailIgnoreCaseAndIdNot(email.trim(), excludeId);
+    public List<Major> getAllMajors() {
+        return majorRepository.findAll();
     }
 
     @Override
     public List<String> getMajors() {
-        return List.of("CNTT", "KTPM", "HTTT", "ATTT", "MMT");
+        return majorRepository.findAll().stream().map(Major::getCode).toList();
     }
 
     @Override
@@ -87,27 +54,19 @@ public class StudentServiceImpl implements StudentService {
         if (keyword != null && !keyword.isBlank()) {
             String trimmed = keyword.trim();
             return studentRepository.findByNameContainingIgnoreCaseOrEmailContainingIgnoreCase(
-                    trimmed, trimmed, sort
-            );
+                    trimmed, trimmed, Pageable.unpaged()
+            ).getContent();
         }
         return studentRepository.findAll(sort);
     }
 
     @Override
     public Page<Student> findStudents(String keyword, int page, int size) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "id"));
-        if (keyword != null && !keyword.isBlank()) {
-            String trimmed = keyword.trim();
-            return studentRepository.findByNameContainingIgnoreCaseOrEmailContainingIgnoreCase(
-                    trimmed, trimmed, pageable
-            );
-        }
-        return studentRepository.findAll(pageable);
+        return findStudents(keyword, page, size, "id", "asc");
     }
 
     @Override
     public Page<Student> findStudents(String keyword, int page, int size, String sortField, String sortDir) {
-        // Xác định chiều sắp xếp: desc nếu người dùng yêu cầu, ngược lại mặc định là asc
         Sort sort = sortDir.equalsIgnoreCase("desc")
                 ? Sort.by(sortField).descending()
                 : Sort.by(sortField).ascending();
@@ -131,7 +90,7 @@ public class StudentServiceImpl implements StudentService {
             form.setName(s.getName());
             form.setEmail(s.getEmail());
             form.setAge(s.getAge());
-            form.setMajor(s.getMajor());
+            form.setMajorId(s.getMajor() != null ? s.getMajor().getId() : null);
             form.setGpa(s.getGpa());
             return form;
         }).orElse(null);
@@ -139,26 +98,72 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     @Transactional
+    public Student create(Student student) {
+        student.setId(null);
+        return studentRepository.save(student);
+    }
+
+    @Override
+    @Transactional
     public void create(StudentForm form) {
+        Major major = majorRepository.findById(form.getMajorId())
+                .orElseThrow(() -> new IllegalArgumentException("Chuyên ngành không tồn tại ID: " + form.getMajorId()));
+
         Student s = new Student();
         s.setName(form.getName());
         s.setEmail(form.getEmail());
         s.setAge(form.getAge());
-        s.setMajor(form.getMajor());
+        s.setMajor(major);
         s.setGpa(form.getGpa());
         studentRepository.save(s);
     }
 
     @Override
     @Transactional
+    public boolean update(Long id, Student data) {
+        return studentRepository.findById(id)
+                .map(existing -> {
+                    existing.setName(data.getName());
+                    existing.setEmail(data.getEmail());
+                    existing.setAge(data.getAge());
+                    existing.setMajor(data.getMajor());
+                    existing.setGpa(data.getGpa());
+                    return true;
+                })
+                .orElse(false);
+    }
+
+    @Override
+    @Transactional
     public boolean update(Long id, StudentForm form) {
         return studentRepository.findById(id).map(s -> {
+            Major major = majorRepository.findById(form.getMajorId())
+                    .orElseThrow(() -> new IllegalArgumentException("Chuyên ngành không tồn tại ID: " + form.getMajorId()));
+
             s.setName(form.getName());
             s.setEmail(form.getEmail());
             s.setAge(form.getAge());
-            s.setMajor(form.getMajor());
+            s.setMajor(major);
             s.setGpa(form.getGpa());
             return true;
         }).orElse(false);
+    }
+
+    @Override
+    @Transactional
+    public boolean delete(Long id) {
+        if (!studentRepository.existsById(id)) {
+            return false;
+        }
+        studentRepository.deleteById(id);
+        return true;
+    }
+
+    @Override
+    public boolean isEmailTaken(String email, Long excludeId) {
+        if (email == null || email.isBlank()) return false;
+        return excludeId == null
+                ? studentRepository.existsByEmailIgnoreCase(email.trim())
+                : studentRepository.existsByEmailIgnoreCaseAndIdNot(email.trim(), excludeId);
     }
 }

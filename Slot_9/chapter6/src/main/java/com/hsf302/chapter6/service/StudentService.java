@@ -1,6 +1,7 @@
 package com.hsf302.chapter6.service;
 
 import com.hsf302.chapter6.dto.StudentForm;
+import com.hsf302.chapter6.entity.Major;
 import com.hsf302.chapter6.entity.Student;
 import org.springframework.data.domain.Page;
 
@@ -40,5 +41,7 @@ public interface StudentService {
 
     // MỚI: Nhận DTO để cập nhật
     boolean update(Long id, StudentForm form);
+
+    List<Major> getAllMajors();
 
 }
