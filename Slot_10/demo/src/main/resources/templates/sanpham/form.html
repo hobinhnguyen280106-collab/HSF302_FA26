@@ -2,18 +2,19 @@
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <title>Thêm sản phẩm</title>
     <link rel="stylesheet" th:href="@{/vendor/bootstrap/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" th:href="@{/css/style.css}"/>
 </head>
-<body>
-<main class="container py-4" style="max-width: 600px">
+<body class="d-flex flex-column min-vh-100">
+
+<!-- 1. Chèn Navbar chung, đánh dấu tab 'sanpham' đang active -->
+<div th:replace="~{fragments/layout :: navbar('sanpham')}"></div>
+
+<main class="container py-4 flex-grow-1" style="max-width: 600px">
     <h2 class="h4 mb-3">Thêm sản phẩm mới</h2>
 
-    <!--
-        th:action → URL đích (tự thêm context path)
-        th:object → object trong Model; bên trong dùng *{...}
-        th:field  → sinh id, name, value cho input
-    -->
     <form th:action="@{/sanpham/them}" th:object="${sanPham}" method="post"
           class="card card-body shadow-sm">
 
@@ -39,5 +40,10 @@
         </div>
     </form>
 </main>
+
+<!-- 2. Chèn Footer và Script chung -->
+<div th:replace="~{fragments/layout :: footer}"></div>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+
 </body>
 </html>

@@ -3,14 +3,17 @@
 <head>
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
-    <title th:text="${tieuDe}">Danh sách</title>
-    <!-- Bootstrap OFFLINE (TODO 0.3). Dùng online thì thay bằng link CDN. -->
+    <title th:text="${tieuDe}">Danh sách sinh viên</title>
+    <!-- Thay link CSS thủ công bằng fragment head-css nếu có, hoặc giữ link offline -->
     <link rel="stylesheet" th:href="@{/vendor/bootstrap/css/bootstrap.min.css}"/>
     <link rel="stylesheet" th:href="@{/css/style.css}"/>
 </head>
-<body>
-<main class="container py-4">
+<body class="d-flex flex-column min-vh-100">
 
+<!-- 1. Chèn Navbar từ fragments/layout và truyền active tab 'sinhvien' -->
+<div th:replace="~{fragments/layout :: navbar('sinhvien')}"></div>
+
+<main class="container py-4 flex-grow-1">
     <h1 class="h3 mb-3" th:text="${tieuDe}">Tiêu đề</h1>
 
     <!-- Có dữ liệu → hiện bảng -->
@@ -26,7 +29,6 @@
         </tr>
         </thead>
         <tbody>
-        <!-- sv: phần tử hiện tại; stat: biến trạng thái (count bắt đầu từ 1) -->
         <tr th:each="sv, stat : ${sinhViens}">
             <td th:text="${stat.count}">1</td>
             <td th:text="${sv.maSV}">SV001</td>
@@ -50,5 +52,10 @@
         Tổng: <strong th:text="${#lists.size(sinhViens)}">0</strong> sinh viên
     </p>
 </main>
+
+<!-- 2. Chèn Footer và Script dùng chung từ fragments/layout -->
+<div th:replace="~{fragments/layout :: footer}"></div>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+
 </body>
 </html>
