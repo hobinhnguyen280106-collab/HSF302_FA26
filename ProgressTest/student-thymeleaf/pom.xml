@@ -19,6 +19,12 @@
     </properties>
 
     <dependencies>
+
+        <dependency>
+            <groupId>nz.net.ultraq.thymeleaf</groupId>
+            <artifactId>thymeleaf-layout-dialect</artifactId>
+        </dependency>
+
         <!-- Spring Boot 4: starter "web" đã đổi tên thành "webmvc" -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
