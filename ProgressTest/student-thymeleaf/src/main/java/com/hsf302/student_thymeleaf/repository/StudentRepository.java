@@ -1,6 +1,6 @@
 package com.hsf302.student_thymeleaf.repository;
 
-import com.hsf302.student.entity.Student;
+import com.hsf302.student_thymeleaf.entity.Student;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -16,4 +16,13 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
     //        → existsByStudentCodeIgnoreCase(String studentCode)
     //  19.3. Kiểm tra mã SV đã tồn tại ở sinh viên KHÁC (dùng khi CẬP NHẬT – bỏ qua chính nó)
     //        → existsByStudentCodeIgnoreCaseAndIdNot(String studentCode, Long id)
+
+    // TODO 19.1: Tìm theo mã SV HOẶC họ tên chứa từ khóa
+    List<Student> findByStudentCodeContainingIgnoreCaseOrFullNameContainingIgnoreCaseOrderByIdAsc(String code, String name);
+
+    // TODO 19.2: Kiểm tra mã SV đã tồn tại (dùng khi THÊM MỚI)
+    boolean existsByStudentCodeIgnoreCase(String studentCode);
+
+    // TODO 19.3: Kiểm tra mã SV đã tồn tại ở sinh viên KHÁC (dùng khi CẬP NHẬT)
+    boolean existsByStudentCodeIgnoreCaseAndIdNot(String studentCode, Long id);
 }
