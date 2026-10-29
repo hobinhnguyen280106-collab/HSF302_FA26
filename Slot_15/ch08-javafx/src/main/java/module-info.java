@@ -8,6 +8,8 @@ module com.fu.ch08 {
     opens com.fu.ch08.b1 to javafx.fxml;
     exports com.fu.ch08.b1;
 
+    exports com.fu.ch08.b2;
+
     // Dành cho thư mục common chứa AlertUtil
     exports com.fu.ch08.common;
 
