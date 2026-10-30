@@ -2,7 +2,8 @@ module com.fu.ch08 {
     requires javafx.controls;
     requires javafx.fxml;
     requires javafx.web;      // Cho phần T5
-    requires javafx.media;    // Cho phần T5
+    requires javafx.media;
+    requires java.desktop;    // Cho phần T5
 
     // Dành cho các file ở thư mục gốc (HelloApplication, HelloController)
     opens com.fu.ch08.b1 to javafx.fxml;
@@ -11,6 +12,9 @@ module com.fu.ch08 {
     exports com.fu.ch08.b2;
 
     exports com.fu.ch08.b3;
+
+    opens com.fu.ch08.b4 to javafx.fxml;
+    exports com.fu.ch08.b4;
 
     // Dành cho thư mục common chứa AlertUtil
     exports com.fu.ch08.common;
