@@ -8,7 +8,7 @@
 		<version>4.1.2</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>fu.DE200093</groupId>
+	<groupId>fu.de200093</groupId>
 	<artifactId>SE20B02_DE200093_SDM_PE</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name/>
