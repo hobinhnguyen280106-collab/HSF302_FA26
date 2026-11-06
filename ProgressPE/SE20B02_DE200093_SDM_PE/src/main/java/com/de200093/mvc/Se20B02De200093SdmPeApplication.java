@@ -1,4 +1,4 @@
-package com.DE200093;
+package com.de200093.mvc;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
